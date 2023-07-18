@@ -21,6 +21,7 @@
     "proposal_goal": "string",
     "proposal_metrics": "string",
     "proposal_solution": "string",
-    "proposers": "list"
+    "proposers": "list",
+    "files_url": "string"
   }
 }
