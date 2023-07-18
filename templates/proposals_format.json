@@ -22,6 +22,6 @@
     "proposal_metrics": "string",
     "proposal_solution": "string",
     "proposers": "list",
-    "files_url": "string"
+    "extra_fields": "dict"
   }
 }

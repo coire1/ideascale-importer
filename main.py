@@ -47,11 +47,19 @@ def import_fund(
         [],
         help="List of stages ids that will be pulled from Ideascale"
     ),
+    stage_keys: List[str] = typer.Option(
+        [],
+        help="List of stage keys that will be pulled from Ideascale"
+    ),
     assessments: str = typer.Option("", help="Valid assessments CSV file"),
     withdrawn: str = typer.Option("", help="Withdrawn proposals CSV file"),
     proposals_map: str = typer.Option(
-        "templates/tags.json",
+        "templates/proposals_map.json",
         help="Mapping for proposals"
+    ),
+    extra_fields_map: str = typer.Option(
+        "templates/proposals_extra_fields.json",
+        help="Mappings for extra fields"
     ),
     funds_format: str = typer.Option(
         "templates/funds_format.json",
@@ -78,6 +86,7 @@ def import_fund(
         authors_output = 'merged_str'
     # Load and prepare
     mappings = json.load(open(f"{proposals_map}"))
+    extra_fields_map = json.load(open(f"{extra_fields_map}"))
     funds_format = json.load(open(f"{funds_format}"))
     challenges_format = json.load(open(f"{challenges_format}"))
     proposals_format = json.load(open(f"{proposals_format}"))
@@ -99,16 +108,31 @@ def import_fund(
     # Get local and remote data
     e_fund = get_fund(fund, threshold, fund_goal)
     challenges = get_challenges(fund, fund_group_id, api_token)
-    proposals = get_proposals(
-        stages,
-        fund,
-        challenges,
-        api_token,
-        mappings,
-        chain_vote_type,
-        assessments,
-        authors_output
-    )
+    if len(stage_keys) > 0:
+        proposals = _get_proposals(
+            stage_keys,
+            fund,
+            challenges,
+            api_token,
+            mappings,
+            extra_fields_map,
+            chain_vote_type,
+            assessments,
+            authors_output
+        )
+    elif len(stages) > 0:
+        proposals = get_proposals(
+            stages,
+            fund,
+            challenges,
+            api_token,
+            mappings,
+            extra_fields_map,
+            chain_vote_type,
+            assessments,
+            authors_output
+        )
+
     excluded = transform_excluded(withdrawn)
 
     # Export relevant data
@@ -175,12 +199,13 @@ def get_challenges(fund_id, fund_group_id, api_token):
     )
     return challenges
 
-def get_proposals(
+def _get_proposals(
     stage_ids,
     fund_id,
     challenges,
     api_token,
     mappings,
+    extra_fields_map,
     chain_vote_type,
     assessments,
     authors_output
@@ -189,6 +214,52 @@ def get_proposals(
     page_size = 50
     ideas = []
     relevant_keys = extract_relevant_keys(mappings)
+    relevant_extra_keys = extract_relevant_keys(extra_fields_map)
+    internal_id = 0
+    for challenge in challenges:
+        for stage in stage_ids:
+            for page in range(MAX_PAGES_TO_QUERY):
+                url = f"{IDEASCALE_API_URL}/v1/campaigns/{challenge['internal_id']}/ideas/status/custom/{stage}/{page}/{page_size}"
+                response = ideascale_get(url, api_token)
+                for idx, idea in enumerate(response):
+                    parsed_idea = parse_idea(
+                        idea,
+                        fund_id,
+                        relevant_keys,
+                        relevant_extra_keys,
+                        extra_fields_map,
+                        challenge,
+                        chain_vote_type,
+                        internal_id,
+                        assessments,
+                        authors_output,
+                        mappings
+                    )
+                    ideas.append(parsed_idea)
+                    internal_id = internal_id + 1
+                if (len(response) < page_size):
+                    # Break page loop if there are no results - thanks IdeaScale
+                    # pagination implementation
+                    break
+    print(f"[bold green]Total ideas pulled: {len(ideas)}[/bold green]")
+    return ideas
+
+def get_proposals(
+    stage_ids,
+    fund_id,
+    challenges,
+    api_token,
+    mappings,
+    extra_fields_map,
+    chain_vote_type,
+    assessments,
+    authors_output
+):
+    print(f"[yellow]Requesting proposals...[/yellow]")
+    page_size = 50
+    ideas = []
+    relevant_keys = extract_relevant_keys(mappings)
+    relevant_extra_keys = extract_relevant_keys(extra_fields_map)
     internal_id = 0
     for stage in stage_ids:
         for page in range(MAX_PAGES_TO_QUERY):
@@ -196,40 +267,19 @@ def get_proposals(
             response = ideascale_get(url, api_token)
             for idx, idea in enumerate(response):
                 challenge = find_challenge(idea['campaignId'], challenges)
-                if not challenge:
-                    continue
-                temp_idea = extract_custom_fields(idea, relevant_keys)
-                parsed_idea = {
-                    "category_name": f"Fund {fund_id}",
-                    "chain_vote_options": "blank,yes,no",
-                    "challenge_id": challenge["id"],
-                    "challenge_type": challenge["challenge_type"],
-                    "chain_vote_type": chain_vote_type,
-                    "internal_id": internal_id,
-                    "proposal_id": idea["id"],
-                    "proposal_impact_score": extract_score(idea["id"], assessments),
-                    "proposal_summary": strip_tags(idea["text"]),
-                    "proposal_title": strip_tags(idea["title"]),
-                    "proposal_url": idea["url"],
-                    "files_url": {
-                            "open_source": idea["customFieldsByKey"]["f10_open_source"],
-                            "external_link1": idea["customFieldsByKey"]["f10_external_link"],
-                            "external_link2": idea["customFieldsByKey"]["f10_external_link_2"],
-                            "external_link3": idea["customFieldsByKey"]["f10_external_link_3"],
-                        },
-                }
-                if authors_output == 'std' or authors_output == 'merged_str':
-                    proposers_name = extract_proposers(idea, authors_output)
-                    parsed_idea['proposer_email'] = idea["authorInfo"]["email"]
-                    parsed_idea['proposer_name'] = proposers_name
-                else:
-                    proposers = extract_proposers(idea, authors_output)
-                    parsed_idea['proposers'] = proposers
-
-                for k in mappings:
-                    extracted = extract_mapping(mappings[k], temp_idea)
-                    if extracted:
-                        parsed_idea[k] = extracted
+                parsed_idea = parse_idea(
+                    idea,
+                    fund_id,
+                    relevant_keys,
+                    relevant_extra_keys,
+                    extra_fields_map,
+                    challenge,
+                    chain_vote_type,
+                    internal_id,
+                    assessments,
+                    authors_output,
+                    mappings
+                )
                 ideas.append(parsed_idea)
                 internal_id = internal_id + 1
             if (len(response) < page_size):
@@ -238,6 +288,46 @@ def get_proposals(
                 break
     print(f"[bold green]Total ideas pulled: {len(ideas)}[/bold green]")
     return ideas
+
+def parse_idea(
+    idea, fund_id, relevant_keys, relevant_extra_keys, extra_fields_map, challenge, chain_vote_type, internal_id, assessments, authors_output, mappings
+):
+    temp_idea = extract_custom_fields(idea, relevant_keys)
+    extra_fields_idea = extract_custom_fields(idea, relevant_extra_keys)
+    parsed_idea = {
+        "category_name": f"Fund {fund_id}",
+        "chain_vote_options": "blank,yes,no",
+        "challenge_id": challenge["id"],
+        "challenge_type": challenge["challenge_type"],
+        "chain_vote_type": chain_vote_type,
+        "internal_id": internal_id,
+        "proposal_id": idea["id"],
+        "proposal_impact_score": extract_score(idea["id"], assessments),
+        "proposal_summary": strip_tags(idea["text"]),
+        "proposal_title": strip_tags(idea["title"]),
+        "proposal_url": idea["url"]
+    }
+    if authors_output == 'std' or authors_output == 'merged_str':
+        proposers_name = extract_proposers(idea, authors_output)
+        # parsed_idea['proposer_email'] = idea["authorInfo"]["email"]
+        parsed_idea['proposer_name'] = proposers_name
+    else:
+        proposers = extract_proposers(idea, authors_output)
+        parsed_idea['proposers'] = proposers
+
+    for k in mappings:
+        extracted = extract_mapping(mappings[k], temp_idea)
+        if extracted:
+            parsed_idea[k] = extracted
+
+    for k in extra_fields_map:
+        extracted = extract_mapping(extra_fields_map[k], extra_fields_idea)
+        if extracted:
+            if 'extra_fields' not in parsed_idea:
+                parsed_idea['extra_fields'] = {}
+            parsed_idea['extra_fields'][k] = extracted
+    return parsed_idea
+
 
 def get_reviews(assessments, reviews_map):
     print(f"[yellow]Preparing reviews...[/yellow]")
@@ -303,11 +393,17 @@ def extract_proposers(idea, authors_output):
     else:
         proposers = [{
             'name': idea['authorInfo']['name'],
-            'email': idea['authorInfo']['email'],
+            #'email': idea['authorInfo']['email'],
             'main': True
         }]
+        '''
         contributors = [
             {'name': c['name'], 'email': c['email']}
+            for c in idea['contributors']
+        ]
+        '''
+        contributors = [
+            {'name': c['name']}
             for c in idea['contributors']
         ]
         return proposers + contributors
@@ -391,6 +487,8 @@ def cast_field(value, dtype):
     elif (dtype == 'bool'):
         return value.lower() == "true"
     elif (dtype == 'list'):
+        return value
+    elif (dtype == 'dict'):
         return value
     else:
         return str(value)
