@@ -305,7 +305,13 @@ def parse_idea(
         "proposal_impact_score": extract_score(idea["id"], assessments),
         "proposal_summary": strip_tags(idea["text"]),
         "proposal_title": strip_tags(idea["title"]),
-        "proposal_url": idea["url"]
+        "proposal_url": idea["url"],
+        "files_url": {
+                    "open_source": idea["customFieldsByKey"]["f10_open_source"],
+                    "external_link1": idea["customFieldsByKey"]["f10_external_link"],
+                    "external_link2": idea["customFieldsByKey"]["f10_external_link_2"],
+                    "external_link3": idea["customFieldsByKey"]["f10_external_link_3"],
+            },
     }
     if authors_output == 'std' or authors_output == 'merged_str':
         proposers_name = extract_proposers(idea, authors_output)
