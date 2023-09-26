@@ -1,12 +1,12 @@
 {
   "proposer_url": ["relevant_link_1", "website__github_repository__or_any_other_relevant_link__", "relevant_link_3"],
-  "proposal_solution": "problem_solution",
+  "proposal_solution": "f10_proposal_solution",
   "proposal_brief": "challenge_brief",
   "proposal_importance": "importance",
   "proposal_goal": "how_does_success_look_like_",
   "proposal_metrics": "key_metrics_to_measure",
   "proposal_public_key": "ada_payment_address__",
-  "proposal_funds": ["requested_funds", "requested_funds_in_ada","requested_funds_coti"],
-  "proposal_relevant_experience": "relevant_experience",
+  "proposal_funds": ["f10_requested_funds", "requested_funds_in_ada","requested_funds_coti"],
+  "proposer_relevant_experience": "f10_project_team",
   "proposal_why": "proposal_why"
 }

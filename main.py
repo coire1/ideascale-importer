@@ -9,6 +9,7 @@ import re
 import pandas as pd
 import numpy as np
 from rich import print
+import strict_rfc3339
 
 app = typer.Typer()
 
@@ -33,7 +34,7 @@ def import_fund(
     fund_group_id: int = typer.Option(1, help="Ideascale Campaigns group id"),
     chain_vote_type: str = typer.Option("private", help="Chain vote type"),
     threshold: int = typer.Option(450, help="Voting threshold"),
-    fund_goal: str = typer.Option("Lorem ipsum", help="Fund goal"),
+    fund_goal: str = typer.Option("Lorem ipsum", help="Fund goal [UNUSED]. This field is ignored, and used to set the current time in RFC3339 format."),
     merge_multiple_authors: bool = typer.Option(
         False,
         help="When active includes and merge contributors name in author field"
@@ -77,7 +78,7 @@ def import_fund(
         "templates/reviews_format.json",
         help="Mapping for assessments transformation."
     ),
-    output_dir: str = typer.Option("meta/fund9", help="Output dir for results"),
+    output_dir: str = typer.Option("meta/fund10", help="Output dir for results"),
 ):
     authors_output = 'std'
     if authors_as_list:
@@ -105,6 +106,8 @@ def import_fund(
         withdrawn = pd.read_csv(withdrawn)
     else:
         withdrawn = False
+    # OVERRIDE fund_goal to set the current time in RFC3339 format
+    fund_goal = strict_rfc3339.now_to_rfc3339_utcoffset(integer=True)
     # Get local and remote data
     e_fund = get_fund(fund, threshold, fund_goal)
     challenges = get_challenges(fund, fund_group_id, api_token)
@@ -305,7 +308,13 @@ def parse_idea(
         "proposal_impact_score": extract_score(idea["id"], assessments),
         "proposal_summary": strip_tags(idea["text"]),
         "proposal_title": strip_tags(idea["title"]),
-        "proposal_url": idea["url"]
+        "proposal_url": idea["url"],
+        "files_url": {
+            "open_source": idea["customFieldsByKey"]["f10_open_source_choice"],
+            "external_link1": idea["customFieldsByKey"]["f10_external_link"],
+            "external_link2": idea["customFieldsByKey"]["f10_external_link_2"],
+            "external_link3": idea["customFieldsByKey"]["f10_external_link_3"],
+        },
     }
     if authors_output == 'std' or authors_output == 'merged_str':
         proposers_name = extract_proposers(idea, authors_output)

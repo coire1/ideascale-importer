@@ -1,3 +1,26 @@
+# Note
+This is specific version of the ideascale-script exactly for fund10.
+It is added collection of the `f10_open_source`, `f10_external_link`, `f10_external_link_2`, `f10_external_link_3` data, which is inserted into `files_url` resulted field. 
+
+So the final proposal view would looks like:
+```
+  {
+    "category_name": "Fund 10",
+    "chain_vote_options": "blank,yes,no",
+    "challenge_id": "4",
+    "challenge_type": "simple",
+    "chain_vote_type": "private",
+    "internal_id": "0",
+    "proposal_id": "107723",
+    "proposal_impact_score": "0",
+    "proposal_summary": "Our mission is to address the challenge of insufficient exposure and underutilized community influence within Cardano's/NFT ecosystem.",
+    "proposal_title": "The Raiders Guild: Amplifying Brand Visibility for Cardano Projects and Web3/Web2 Businesses.",
+    "proposal_url": "https://cardano.ideascale.com/a/dtd/107723-163",
+    "proposer_name": "Mallard Order",
+    "files_url": "{'open_source': '<p>(Errors on submission form will edit in a few hours)</p>', 'external_link1': '', 'external_link2': '', 'external_link3': ''}"
+  }
+```
+
 # Ideascale importer
 
 ```
