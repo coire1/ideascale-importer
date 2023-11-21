@@ -1,0 +1,40 @@
+[
+  {
+    "category_name": "Fund 9",
+    "chain_vote_options": "blank,yes,no",
+    "challenge_id": "1",
+    "challenge_type": "simple",
+    "chain_vote_type": "private",
+    "internal_id": "3",
+    "proposal_funds": "18000",
+    "proposal_id": "999999",
+    "proposal_impact_score": "0",
+    "proposal_summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
+    "proposal_title": "Lorem ipsum dolor!",
+    "proposal_url": "https://cardano.ideascale.com/a/dtd/999999-48088",
+    "proposal_relevant_experience": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.",
+    "proposer_url": "https://example.org",
+    "proposal_solution": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.",
+    "proposers": [
+      {
+        "name": "Lorenz Ipsum",
+        "main": true
+      }
+    ],
+    "extra_fields": {
+      "full_solution": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque. Vivamus nulla dui, tristique egestas faucibus sit amet, tristique sed velit. Donec libero risus, volutpat id turpis et, luctus hendrerit turpis. Praesent sed ante vel enim sagittis laoreet. Nulla efficitur tincidunt bibendum. Etiam gravida odio massa, ac finibus quam euismod eget.\n\n  \n\n\nExamples of the: \n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. \n\nStep 2 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n\nStep 3 - LLorem ipsum dolor sit amet, consectetur adipiscing elit. \n\nStep 4 - Lorem ipsum dolor sit amet, consectetur adipiscing elit.  -\n\n",
+      "team_details": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "auto_translated": "No",
+      "budget_breakdown": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "challenges_or_risks": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "timeline_and_key_milestones": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "how_solution_address_challenge": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "sdg_rating": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "return_in_a_later_round": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "relevant_link_1": "https://example.org",
+      "relevant_link_2": "https://example.org",
+      "progress_metrics": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed iaculis diam elementum, bibendum risus in, interdum ante. Integer id urna velit. In diam elit, viverra sed sem vel, fringilla volutpat neque.\n\n  \n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "new_proposal": "No, not a lorem ipsum dolor sit amet."
+    }
+  }
+]

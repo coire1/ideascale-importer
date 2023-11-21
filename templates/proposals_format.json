@@ -14,7 +14,7 @@
     "proposal_url": "string",
     "proposer_email": "string",
     "proposer_name": "string",
-    "proposal_relevant_experience": "string",
+    "proposer_relevant_experience": "string",
     "proposer_url": "string",
     "proposal_brief": "string",
     "proposal_importance": "string",
@@ -22,6 +22,7 @@
     "proposal_metrics": "string",
     "proposal_solution": "string",
     "proposers": "list",
-    "extra_fields": "dict"
+    "extra_fields": "dict",
+    "files_url": "string"
   }
 }
